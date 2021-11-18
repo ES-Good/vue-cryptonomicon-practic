@@ -41,7 +41,7 @@
         <div class="flex">
           <div class="max-w-xs">
             <label for="wallet" class="block text-sm font-medium text-gray-700"
-              >Тикер</label>
+              >Введите криптовалюту, например "BTC"</label>
             <div class="mt-1 relative rounded-md shadow-md">
               <input
                 v-model="ticker"
@@ -143,9 +143,10 @@
           @click="select(t)"
           :class="{
             'border-4': sel == t,
+            'bg-white': t.status,
+            'bg-black border-4': !t.status,
           }"
           class="
-            bg-white
             overflow-hidden
             shadow
             rounded-lg
@@ -155,9 +156,9 @@
         >
           <div class="px-4 py-5 sm:p-6 text-center">
             <dt class="text-sm font-medium text-gray-500 truncate">
-              {{ t.name }} - USD
+              {{ t.name }}
             </dt>
-            <dd class="mt-1 text-3xl font-semibold text-gray-900">
+            <dd class="mt-1 text-3xl font-semibold text-gray-900 img-box">
               <img v-bind:src="t.urlImg" alt="">
             </dd>
           </div>
@@ -296,16 +297,30 @@ export default {
       })
     },
     add() {
-      if (this.doubleTicker == false) {
-        const currentTicker = {
-          name: this.ticker,
-          price: this.tickersArray[`${this.ticker}`].Id,
-          urlImg: 'https://www.cryptocompare.com' + this.tickersArray[`${this.ticker}`].ImageUrl
-        };
-        this.tickers.push(currentTicker);
+      if (!this.tickersArray[`${this.ticker.toUpperCase()}`] == false) {
+        this.searchDouble()
+        if (this.doubleTicker == false) {
+          const currentTicker = {
+            name: this.ticker.toUpperCase(),
+            price: this.tickersArray[`${this.ticker.toUpperCase()}`].Id,
+            urlImg: 'https://www.cryptocompare.com' + this.tickersArray[`${this.ticker.toUpperCase()}`].ImageUrl,
+            status: true
+          };
+          this.tickers.push(currentTicker);
 
-        this.ticker = "";
-        
+          this.ticker = "";
+          
+        }
+      }else{
+          const currentTicker = {
+            name: this.ticker.toUpperCase() + "| Нет такой валюты",
+            price: 'Нет такой крипты',
+            urlImg: '-',
+            status: false
+          };
+          this.tickers.push(currentTicker);
+
+          this.ticker = "";
       }
     },
 
@@ -353,3 +368,10 @@ export default {
   }
 };
 </script>
+
+<style>
+.img-box{
+  display: flex;
+  justify-content: center;
+}
+</style>
